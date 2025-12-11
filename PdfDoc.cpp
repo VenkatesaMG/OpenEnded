@@ -21,6 +21,8 @@ PdfDoc::PdfDoc(QWidget *parent)
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_view);
     m_view->setPageMode(QPdfView::PageMode::MultiPage);
+    pageNavigator = m_view->pageNavigator();
+    connect(pageNavigator, &QPdfPageNavigator::currentPageChanged, this, &PdfDoc::handlePageChange);
 }
 
 void PdfDoc::loadDocument(const QString &filePath){
@@ -28,6 +30,7 @@ void PdfDoc::loadDocument(const QString &filePath){
 }
 
 void PdfDoc::zoom_in(){
+    this->m_view->setZoomMode(QPdfView::ZoomMode::Custom);
     qreal currentFactor = this->m_view->zoomFactor();
     qreal newFactor = currentFactor * this->ZOOM_STEP;
     if(newFactor <= this->MAX_ZOOM){
@@ -36,6 +39,7 @@ void PdfDoc::zoom_in(){
 }
 
 void PdfDoc::zoom_out(){
+    this->m_view->setZoomMode(QPdfView::ZoomMode::Custom);
     qreal currentFactor = this->m_view->zoomFactor();
     qreal newFactor = currentFactor / this->ZOOM_STEP;
     if(newFactor >= this->MIN_ZOOM){
@@ -55,4 +59,21 @@ int PdfDoc::totalPages(){
         return -1;
     }
     return this->document->pageCount();
+}
+
+void PdfDoc::fitToPageWidth(){
+    if(m_view){
+        if(m_view->zoomMode() == QPdfView::ZoomMode::Custom){
+            m_view->setZoomMode(QPdfView::ZoomMode::FitInView);
+        } else if (m_view->zoomMode() == QPdfView::ZoomMode::FitToWidth){
+            m_view->setZoomMode(QPdfView::ZoomMode::FitInView);
+        } else if(m_view->zoomMode() == QPdfView::ZoomMode::FitInView){
+            m_view->setZoomMode(QPdfView::ZoomMode::FitToWidth);
+        }
+    }
+}
+
+void PdfDoc::handlePageChange(int pageNumber){
+    std::string pageStringNumber = std::to_string(pageNumber + 1);
+    emit getCurrentPage(QString::fromStdString(pageStringNumber));
 }

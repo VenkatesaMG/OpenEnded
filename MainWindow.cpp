@@ -52,15 +52,6 @@ MainWindow::MainWindow(QWidget *parent)
     QToolBar *toolBar = addToolBar("Main Toolbar");
     toolBar->setMovable(false);
 
-    toolBar->addAction(open);
-    toolBar->addSeparator();
-
-    QAction *prevPageAction = new QAction(tr("&Prev"));
-    QAction *nextPageAction = new QAction(tr("&Next"));
-    toolBar->addAction(prevPageAction);
-    toolBar->addAction(nextPageAction);
-    toolBar->addSeparator();
-
     toolBar->addAction(zoom_in);
     toolBar->addAction(zoom_out);
 
@@ -80,6 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(zoom_in, &QAction::triggered, pdfWidget, &PdfDoc::zoom_in);
     connect(zoom_out, &QAction::triggered, pdfWidget, &PdfDoc::zoom_out);
+    connect(fitToPageWidthAction, &QAction::triggered, pdfWidget, &PdfDoc::fitToPageWidth);
+    connect(pdfWidget, &PdfDoc::getCurrentPage, pageNum, &QLineEdit::setText);
 }
 
 void MainWindow::openFile(){
@@ -90,8 +83,8 @@ void MainWindow::openFile(){
     } else {
         qDebug() << "File Selection cancelled";
     }
+    this->pageNum->setText(QString::fromStdString("1"));
     std::string totalPages = std::to_string(this->pdfWidget->totalPages());
-    this->pageNum->setText(QString::fromStdString(totalPages));
     std::string customPageLabel = "of " + totalPages;
     this->pageLabel->setText(QString::fromStdString(customPageLabel));
 }
