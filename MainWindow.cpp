@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "./ui_MainWindow.h"
 #include "PdfDoc.h"
+#include "SearchBar.h"
 #include <QPushButton>
 #include <QLabel>
 #include <QApplication>
@@ -11,6 +12,8 @@
 #include <QPdfDocument>
 #include <QToolBar>
 #include <QLineEdit>
+#include <QWidgetList>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -65,14 +68,28 @@ MainWindow::MainWindow(QWidget *parent)
     toolBar->addWidget(pageNum);
     toolBar->addWidget(pageLabel);
 
+    QAction *search = new QAction(tr("&Search"));
+    toolBar->addAction(search);
+
+    m_searchBar = new SearchBar(this);
+    m_searchBar->hide();
+    // QAction *showThumbnails = new QAction(tr("&Thumbnails"));
+    // toolBar->addAction(showThumbnails);
+
     // PDF Canvas
     pdfWidget = new PdfDoc(this);
     setCentralWidget(pdfWidget);
+
+    // Thumbnails
+
 
     connect(zoom_in, &QAction::triggered, pdfWidget, &PdfDoc::zoom_in);
     connect(zoom_out, &QAction::triggered, pdfWidget, &PdfDoc::zoom_out);
     connect(fitToPageWidthAction, &QAction::triggered, pdfWidget, &PdfDoc::fitToPageWidth);
     connect(pdfWidget, &PdfDoc::getCurrentPage, pageNum, &QLineEdit::setText);
+    connect(search, &QAction::triggered, this, &MainWindow::handleSearch);
+    connect(m_searchBar, &SearchBar::searchSignal, pdfWidget, &PdfDoc::searchSlot);
+    connect(m_searchBar, &SearchBar::clearSearch, pdfWidget, &PdfDoc::clearSearch);
 }
 
 void MainWindow::openFile(){
@@ -87,6 +104,13 @@ void MainWindow::openFile(){
     std::string totalPages = std::to_string(this->pdfWidget->totalPages());
     std::string customPageLabel = "of " + totalPages;
     this->pageLabel->setText(QString::fromStdString(customPageLabel));
+}
+
+void MainWindow::handleSearch(){
+    if (!m_searchBar->isVisible()) {
+        m_searchBar->show();
+        pdfWidget->m_view->repaint();
+    }
 }
 
 void MainWindow::closeApp(){

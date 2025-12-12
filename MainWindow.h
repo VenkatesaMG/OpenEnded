@@ -1,7 +1,10 @@
 #include <QMainWindow>
 #include "PdfDoc.h"
+#include "SearchBar.h"
 #include <QLabel>
 #include <QLineEdit>
+#include <QWidgetList>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,10 +22,16 @@ public:
     PdfDoc *pdfWidget;
     QLabel *pageLabel;
     QLineEdit *pageNum;
+    SearchBar *m_searchBar = nullptr;
+    // QWidgetList *thumbnails;
+
+    // Methods
 
 private slots:
     void openFile();
     void closeApp();
+    void handleSearch();
+    // void displayThumbnails();
 
 private:
     Ui::MainWindow *ui;

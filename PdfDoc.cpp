@@ -9,14 +9,19 @@
 #include <QPdfView>
 #include <QVBoxLayout>
 #include <QPdfPageNavigator>
+#include <QPdfSearchModel>
 
 PdfDoc::PdfDoc(QWidget *parent)
     : QWidget{parent}
 {
     document = new QPdfDocument(this);
     m_view = new QPdfView(this);
+    m_searchModel = new QPdfSearchModel(this);
+    m_searchModel->setDocument(document);
 
     m_view->setDocument(document);
+    m_view->setSearchModel(m_searchModel);
+
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(m_view);
@@ -76,4 +81,14 @@ void PdfDoc::fitToPageWidth(){
 void PdfDoc::handlePageChange(int pageNumber){
     std::string pageStringNumber = std::to_string(pageNumber + 1);
     emit getCurrentPage(QString::fromStdString(pageStringNumber));
+}
+
+void PdfDoc::searchSlot(const QString &text){
+    m_searchModel->setSearchString(text);
+    m_searchModel->searchString();
+    m_view->repaint();
+}
+
+void PdfDoc::clearSearch(){
+    m_searchModel->setSearchString("");
 }
