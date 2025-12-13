@@ -13,6 +13,8 @@
 #include <QToolBar>
 #include <QLineEdit>
 #include <QWidgetList>
+#include <QPdfSearchModel>
+#include <QPdfLink>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -90,6 +92,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(search, &QAction::triggered, this, &MainWindow::handleSearch);
     connect(m_searchBar, &SearchBar::searchSignal, pdfWidget, &PdfDoc::searchSlot);
     connect(m_searchBar, &SearchBar::clearSearch, pdfWidget, &PdfDoc::clearSearch);
+    connect(m_searchBar, &SearchBar::prevSearchSignal, this, &MainWindow::onSearchPrev);
+    connect(m_searchBar, &SearchBar::nextSearchSignal, this, &MainWindow::onSearchNext);
 }
 
 void MainWindow::openFile(){
@@ -115,6 +119,36 @@ void MainWindow::handleSearch(){
 
 void MainWindow::closeApp(){
     this->close();
+}
+
+void MainWindow::onSearchPrev(){
+    auto *tmpSearchModel = pdfWidget->getSearchModel();
+    if(!tmpSearchModel || tmpSearchModel->rowCount(QModelIndex()) == 0){
+        return;
+    }
+    currentSearchIndex--;
+    if(currentSearchIndex < 0){
+        currentSearchIndex = tmpSearchModel->rowCount(QModelIndex()) - 1;
+    }
+    jumpToSearchResult(currentSearchIndex);
+}
+
+void MainWindow::onSearchNext(){
+    auto *tmpSearchModel = pdfWidget->getSearchModel();
+    if(!tmpSearchModel || tmpSearchModel->rowCount(QModelIndex()) == 0){
+        return;
+    }
+    currentSearchIndex++;
+    if(currentSearchIndex >= tmpSearchModel->rowCount(QModelIndex())){
+        currentSearchIndex = 0;
+    }
+    jumpToSearchResult(currentSearchIndex);
+}
+
+void MainWindow::jumpToSearchResult(int pageIndex){
+    QPdfLink link = pdfWidget->getSearchModel()->resultAtIndex(pageIndex);
+    pdfWidget->pageNavigator->jump(link.page(), link.location(), pdfWidget->pageNavigator->currentZoom());
+    statusBar()->showMessage(QString("Result %1 of %2").arg(pageIndex + 1).arg(pdfWidget->getSearchModel()->rowCount(QModelIndex())));
 }
 
 MainWindow::~MainWindow()

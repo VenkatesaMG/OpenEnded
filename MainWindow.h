@@ -23,14 +23,19 @@ public:
     QLabel *pageLabel;
     QLineEdit *pageNum;
     SearchBar *m_searchBar = nullptr;
+    int currentSearchIndex = 0;
     // QWidgetList *thumbnails;
 
     // Methods
+    void jumpToSearchResult(int pageIndex);
 
 private slots:
     void openFile();
     void closeApp();
     void handleSearch();
+    void onSearchNext();
+    void onSearchPrev();
+
     // void displayThumbnails();
 
 private:

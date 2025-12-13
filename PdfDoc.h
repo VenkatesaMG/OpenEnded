@@ -12,7 +12,7 @@ class PdfDoc : public QWidget
     Q_OBJECT
 public:
     explicit PdfDoc(QWidget *parent = nullptr);
-    QPdfSearchModel *searchModel() const { return m_searchModel; }
+    QPdfSearchModel *getSearchModel() const { return m_searchModel; }
 
     // members
     qint64 pageIndex;
