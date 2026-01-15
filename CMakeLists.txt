@@ -13,6 +13,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Pdf PdfWidgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 
 set(PROJECT_SOURCES
@@ -20,6 +21,7 @@ set(PROJECT_SOURCES
         MainWindow.cpp
         MainWindow.h
         MainWindow.ui
+        resources.qrc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -28,6 +30,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         ${PROJECT_SOURCES}
         PdfDoc.h PdfDoc.cpp
         SearchBar.h SearchBar.cpp
+        CustomPdfView.h CustomPdfView.cpp
 
 
     )
@@ -52,6 +55,7 @@ endif()
 target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::Pdf)
 target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::PdfWidgets)
+target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(OpenEnded PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 

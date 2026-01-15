@@ -52,5 +52,5 @@ void SearchBar::prevSearchSlot(){
 }
 
 void SearchBar::nextSearchSlot(){
-    emit prevSearchSignal();
+    emit nextSearchSignal();
 }

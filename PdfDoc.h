@@ -6,6 +6,8 @@
 #include <QtPdfWidgets/QPdfView>
 #include <QLabel>
 #include <QPdfPageNavigator>
+#include <QPdfLinkModel>
+#include "CustomPdfView.h"
 
 class PdfDoc : public QWidget
 {
@@ -17,9 +19,11 @@ public:
     // members
     qint64 pageIndex;
     QPdfDocument *document;
-    QPdfView *m_view;
+    CustomPdfView *m_view;
     QPdfPageNavigator *pageNavigator;
     QPdfSearchModel *m_searchModel;
+    QPdfLinkModel *m_linkModel;
+
     static constexpr qreal ZOOM_STEP = 1.1;
     static constexpr qreal MIN_ZOOM = 0.5;
     static constexpr qreal MAX_ZOOM = 3.0;
@@ -28,7 +32,7 @@ public:
     void loadDocument(const QString &filePath);
     int totalPages();
     int currentPageIndex();
-
+    void debugLinksOnCurrentPage();
 
 public slots:
     void zoom_in();

@@ -72,6 +72,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     QAction *search = new QAction(tr("&Search"));
     toolBar->addAction(search);
+    toolBar->addSeparator();
+
+    QAction *draw = new QAction(tr("&Draw"));
+    toolBar->addAction(draw);
 
     m_searchBar = new SearchBar(this);
     m_searchBar->hide();
@@ -83,8 +87,6 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(pdfWidget);
 
     // Thumbnails
-
-
     connect(zoom_in, &QAction::triggered, pdfWidget, &PdfDoc::zoom_in);
     connect(zoom_out, &QAction::triggered, pdfWidget, &PdfDoc::zoom_out);
     connect(fitToPageWidthAction, &QAction::triggered, pdfWidget, &PdfDoc::fitToPageWidth);
@@ -94,6 +96,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_searchBar, &SearchBar::clearSearch, pdfWidget, &PdfDoc::clearSearch);
     connect(m_searchBar, &SearchBar::prevSearchSignal, this, &MainWindow::onSearchPrev);
     connect(m_searchBar, &SearchBar::nextSearchSignal, this, &MainWindow::onSearchNext);
+    connect(draw, &QAction::triggered, this, [=](){
+        bool curDrawState = pdfWidget->m_view->m_isDrawing;
+        pdfWidget->m_view->m_isDrawing = !curDrawState;
+    });
 }
 
 void MainWindow::openFile(){
@@ -113,7 +119,7 @@ void MainWindow::openFile(){
 void MainWindow::handleSearch(){
     if (!m_searchBar->isVisible()) {
         m_searchBar->show();
-        pdfWidget->m_view->repaint();
+        pdfWidget->m_view->update();
     }
 }
 
